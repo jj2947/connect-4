@@ -5,21 +5,14 @@ Author: Jessica Jiang
 Date Last Modified: */
 
 #include <stdio.h>
-#define width 7
-#define height 6
+#define width 8
+#define height 9
 
-// Function that prints the connect four board
-void PrintBoard(char boardArray[height][width])
+// Function that initialises the board
+void InitialiseBoard(char boardArray[height][width])
 {
 
     int row, col, column;
-
-    for (col = 0; col < width; col++)
-    {
-        printf("%i", col + 1);
-    }
-
-    printf("%c", '\n');
 
     for (row = 0; row < height; row++)
     {
@@ -30,53 +23,85 @@ void PrintBoard(char boardArray[height][width])
             if (row == 0 || row == height - 1)
             {
                 boardArray[row][column] = '-';
+            }
+            else if (col == 0 || col == width - 1)
+            {
+                boardArray[row][column] = '|';
+            }
+            else
+            {
+                boardArray[row][column] = ' ';
+            }
+            column++;
+        }
+    }
+}
 
+// Function that prints the connect four board
+void PrintBoard(char boardArray[height][width])
+{
+
+    int row, col;
+
+    printf("\n ");
+
+    for (col = 0; col < width - 2; col++)
+    {
+        printf("%i", col + 1);
+    }
+
+    printf("%c", '\n');
+
+    for (row = 0; row < height; row++)
+    {
+        for (col = 0; col < width; col++)
+        {
+
+            if (row == 0 || row == height - 1)
+            {
                 printf("%c", '-');
             }
             else if (col == 0 || col == width - 1)
             {
                 printf("%c", '|');
-                boardArray[row][column] = '|';
             }
             else
             {
-                printf(" ");
-                boardArray[row][column] = ' ';
+                printf("%c", boardArray[row][col]);
             }
-            column++;
         }
         printf("\n");
     }
 }
 
 /*Function that gets the column they want to drop their token into from the player*/
-int GetMove()
+int GetMove(int player)
 {
     int column, i;
     int valid = 0;
     i = 1;
-    printf("\nEnter Column Number: ");
+    printf("\nPlayer %d Enter Column Number: ", player);
 
-    // Ignore any invalid columns
     scanf("%d", &column);
 
-    while (valid == 0 && i <= width)
+    // Ignore any invalid columns
+    while (valid == 0 && i < width)
     {
         if (i == column)
         {
             valid = 1;
-            return column;
+            break;
         }
         else
         {
             i++;
         }
 
-        if (i == width + 1)
+        if (i == width - 1)
         {
-            printf("Enter Column Number: ");
+            printf("Player %d Enter Column Number: ", player);
             scanf("%d", &column);
-            i = 0;
+            i = 1;
         }
     }
     return column;
@@ -100,7 +125,7 @@ int CheckWin(char boardArray[height][width], int player)
     }
 
     // Check for vertical win
-    for (col = 0; col < width; col++)
+    for (col = 1; col < width; col++)
     {
         count = 0;
         for (row = height - 1; row >= 0; row--)
@@ -142,14 +167,44 @@ int CheckWin(char boardArray[height][width], int player)
             }
         }
     }
+
+    // Check for left diagonal win
+    int maxRow, maxCol;
+    for (row = 0; row < height; row++)
+    {
+        for (col = 0; col < width; col++)
+        {
+            maxRow = row - 4;
+            maxCol = col + 4;
+                if (maxRow < height && maxCol < width && boardArray[row][col] == symbol && boardArray[row-1][col+1] == symbol && boardArray[row-2][col+2] && boardArray[row-3][col+3] == symbol)
+                {
+                    return 1;
+                }
+        }
+    }
+
+    // Check for right diagonal win
+    for (row = 0; row < height; row++)
+    {
+        for (col = 0; col < width; col++)
+        {
+            maxRow = row + 4;
+            maxCol = col + 4;
+            if (maxRow < height && maxCol < width && boardArray[row][col] == symbol && boardArray[row-1][col-1] == symbol && boardArray[row-2][col-2] && boardArray[row-3][col-3] == symbol)
+            {
+                return 1;
+            }
+        }
+    }
+    return 0;
 }
 
-int MakeMove(int boardArray[height][width], int move, int player)
+void MakeMove(char boardArray[height][width], int move, int player)
 {
 
     int i;
 
-    for (i = height - 1; i > 0; i++)
+    for (i = height - 1; i >= 0; i--)
     {
         if (boardArray[i][move] == ' ')
         {
@@ -157,23 +212,55 @@ int MakeMove(int boardArray[height][width], int move, int player)
             if (player == 1)
             {
                 boardArray[i][move] = 'X';
-                return move;
+                break;
             }
             else
             {
                 boardArray[i][move] = 'O';
-                return move;
+                break;
             }
         }
     }
-    return -1;
 }
 
 int main(void)
 {
     char boardArray[height][width] = {0};
 
+    InitialiseBoard(boardArray);
     PrintBoard(boardArray);
-    GetMove();
+
+    int p1Win = 0;
+    int p2Win = 0;
+
+    /* Main game loop */
+    while (p1Win == 0 && p2Win == 0)
+    {
+        int move1 = GetMove(1);
+        MakeMove(boardArray, move1, 1);
+        p1Win = CheckWin(boardArray, 1);
+
+        PrintBoard(boardArray);
+
+        int move2 = GetMove(2);
+        MakeMove(boardArray, move2, 2);
+        p2Win = CheckWin(boardArray, 2);
+
+        PrintBoard(boardArray);
+
+        if (p1Win && p2Win)
+        {
+            printf("\n\n Tie!!\n\n");
+        }
+        else if (p1Win == 1)
+        {
+            printf("\n\nPlayer 1 Wins!!\n\n");
+        }
+        else if (p2Win == 1)
+        {
+            printf("\n\nPlayer 2 Wins!!\n\n");
+        }
+    }
+
     return 0;
 }
