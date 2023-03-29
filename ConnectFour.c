@@ -193,7 +193,7 @@ int CheckWin(char boardArray[height][width], int player)
         {
             maxRow = row + 3;
             maxCol = col + 3;
-            if (maxRow < height && maxCol < width && boardArray[row][col] == symbol && boardArray[row-1][col-1] == symbol && boardArray[row-2][col-2] && boardArray[row-3][col-3] == symbol)
+            if (maxRow < height && maxCol < width && boardArray[row][col] == symbol && boardArray[row-1][col-1] == symbol && boardArray[row-2][col-2] == symbol && boardArray[row-3][col-3] == symbol)
             {
                  printf("b");
                 return 1;
