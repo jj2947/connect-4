@@ -16,7 +16,7 @@ void PrintBoard(char boardArray[height][width])
 
     for (col = 0; col < width; col++)
     {
-        printf("%i ", col + 1);
+        printf("%i", col + 1);
     }
 
     printf("%c", '\n');
@@ -30,21 +30,20 @@ void PrintBoard(char boardArray[height][width])
             if (row == 0 || row == height - 1)
             {
                 boardArray[row][column] = '-';
-                boardArray[row][column++] = '-';
 
-                printf("%c ", '-');
+                printf("%c", '-');
             }
             else if (col == 0 || col == width - 1)
             {
-                printf("%c ", '|');
+                printf("%c", '|');
                 boardArray[row][column] = '|';
-                boardArray[row][column++] = '|';
+
             }
             else
             {
-                printf("  ");
+                printf(" ");
                 boardArray[row][column] = ' ';
-                boardArray[row][column++] = ' ';
+
             }
             column++;
         }
@@ -83,6 +82,25 @@ int getColumn(void)
         }
     }
     return column;
+}
+
+int makeMove(int boardArray[height][width], int move, int player) {
+
+    int i;
+
+    for (i = 0; i < height; i++) {
+        if (boardArray[i][move] == ' ') {
+
+            if (player == 1) {
+                boardArray[i][move] = 'X';
+            }
+            else {
+                boardArray[i][move] = 'O';
+            }
+            return 1;
+        }
+    }
+    return 0;
 }
 
 int main(void)
