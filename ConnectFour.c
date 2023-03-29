@@ -43,11 +43,11 @@ void PrintBoard(char boardArray[height][width])
 
     int row, col;
 
-    printf("\n ");
+    printf("\n  ");
 
     for (col = 0; col < width - 2; col++)
     {
-        printf("%i", col + 1);
+        printf("%i ", col + 1);
     }
 
     printf("%c", '\n');
@@ -59,15 +59,15 @@ void PrintBoard(char boardArray[height][width])
 
             if (row == 0 || row == height - 1)
             {
-                printf("%c", '-');
+                printf("%c ", '-');
             }
             else if (col == 0 || col == width - 1)
             {
-                printf("%c", '|');
+                printf("%c ", '|');
             }
             else
             {
-                printf("%c", boardArray[row][col]);
+                printf("%c ", boardArray[row][col]);
             }
         }
         printf("\n");
@@ -125,7 +125,7 @@ int CheckWin(char boardArray[height][width], int player)
     }
 
     // Check for vertical win
-    for (col = 1; col < width; col++)
+    for (col = 1; col < width-1; col++)
     {
         count = 0;
         for (row = height - 1; row >= 0; row--)
@@ -136,6 +136,7 @@ int CheckWin(char boardArray[height][width], int player)
 
                 if (count == 4)
                 {
+                    printf("d");
                     return 1;
                 }
             }
@@ -150,7 +151,7 @@ int CheckWin(char boardArray[height][width], int player)
     for (row = height - 1; row >= 0; row--)
     {
         count = 0;
-        for (col = 0; col < width; col++)
+        for (col = 1; col < width-1; col++)
         {
             if (boardArray[row][col] == symbol)
             {
@@ -158,6 +159,7 @@ int CheckWin(char boardArray[height][width], int player)
 
                 if (count == 4)
                 {
+                     printf("c");
                     return 1;
                 }
             }
@@ -174,10 +176,11 @@ int CheckWin(char boardArray[height][width], int player)
     {
         for (col = 0; col < width; col++)
         {
-            maxRow = row - 4;
-            maxCol = col + 4;
-                if (maxRow < height && maxCol < width && boardArray[row][col] == symbol && boardArray[row-1][col+1] == symbol && boardArray[row-2][col+2] && boardArray[row-3][col+3] == symbol)
+            maxRow = row - 3;
+            maxCol = col + 3;
+                if (maxRow >= 0 && maxCol < width && boardArray[row][col] == symbol && boardArray[row-1][col+1] == symbol && boardArray[row-2][col+2] == symbol && boardArray[row-3][col+3] == symbol)
                 {
+                    printf("a");
                     return 1;
                 }
         }
@@ -188,10 +191,11 @@ int CheckWin(char boardArray[height][width], int player)
     {
         for (col = 0; col < width; col++)
         {
-            maxRow = row + 4;
-            maxCol = col + 4;
+            maxRow = row + 3;
+            maxCol = col + 3;
             if (maxRow < height && maxCol < width && boardArray[row][col] == symbol && boardArray[row-1][col-1] == symbol && boardArray[row-2][col-2] && boardArray[row-3][col-3] == symbol)
             {
+                 printf("b");
                 return 1;
             }
         }
@@ -199,6 +203,7 @@ int CheckWin(char boardArray[height][width], int player)
     return 0;
 }
 
+// Function that assigns the player's move to the boardArray
 void MakeMove(char boardArray[height][width], int move, int player)
 {
 
