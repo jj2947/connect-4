@@ -2,5 +2,5 @@ settings.json
 ConnectFour
 tasks.json
 Info.plist
-.vscode
-ConnectFour.dysm
+ConnectFour
+launch.json
