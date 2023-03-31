@@ -2,11 +2,11 @@
 want to drop their token into
 
 Author: Jessica Jiang
-Date Last Modified: */
+Date Last Modified: 31/03/23*/
 
 #include <stdio.h>
-#define width 8
-#define height 9
+#define width 9
+#define height 8
 
 // Function that initialises the board
 void InitialiseBoard(char boardArray[height][width])
@@ -75,7 +75,7 @@ void PrintBoard(char boardArray[height][width])
 }
 
 /*Function that gets the column they want to drop their token into from the player*/
-int GetMove(int player)
+int GetMove(char boardArray[height][width], int player)
 {
     int column, i;
     int valid = 0;
@@ -83,6 +83,19 @@ int GetMove(int player)
     printf("\nPlayer %d Enter Column Number: ", player);
 
     scanf("%d", &column);
+
+    while (boardArray[1][column] != ' ')
+    {
+        for (int col = 0; col < width; col++)
+        {
+            if (boardArray[1][col] == ' ')
+            {
+                printf("Player %d Enter Valid Column Number: ", player);
+                scanf("%d", &column);
+                col = width;
+            }
+        }
+    }
 
     // Ignore any invalid columns
     while (valid == 0 && i < width)
@@ -99,7 +112,7 @@ int GetMove(int player)
 
         if (i == width - 1)
         {
-            printf("Player %d Enter Column Number: ", player);
+            printf("Player %d Enter Valid Column Number: ", player);
             scanf("%d", &column);
             i = 1;
         }
@@ -114,6 +127,7 @@ int CheckWin(char boardArray[height][width], int player)
     char symbol;
     int row;
     int col;
+    int win = 0;
 
     if (player == 1)
     {
@@ -136,7 +150,7 @@ int CheckWin(char boardArray[height][width], int player)
 
                 if (count == 4)
                 {
-                    return 1;
+                    win = 1;
                 }
             }
             else if (boardArray[row][col] != symbol && count >= 1)
@@ -158,7 +172,7 @@ int CheckWin(char boardArray[height][width], int player)
 
                 if (count == 4)
                 {
-                    return 1;
+                    win = 1;
                 }
             }
             else if (boardArray[row][col] != symbol && count >= 1)
@@ -178,7 +192,7 @@ int CheckWin(char boardArray[height][width], int player)
             maxCol = col + 3;
             if (maxRow >= 0 && maxCol < width && boardArray[row][col] == symbol && boardArray[row - 1][col + 1] == symbol && boardArray[row - 2][col + 2] == symbol && boardArray[row - 3][col + 3] == symbol)
             {
-                return 1;
+                win = 1;
             }
         }
     }
@@ -188,10 +202,41 @@ int CheckWin(char boardArray[height][width], int player)
     {
         for (col = 0; col < width; col++)
         {
-            maxRow = row + 3;
-            maxCol = col + 3;
-            if (maxRow < height && maxCol < width && boardArray[row][col] == symbol && boardArray[row - 1][col - 1] == symbol && boardArray[row - 2][col - 2] == symbol && boardArray[row - 3][col - 3] == symbol)
+            maxRow = row - 3;
+            maxCol = col - 3;
+            if (maxRow >= 0 && maxCol >= 0 && boardArray[row][col] == symbol && boardArray[row - 1][col - 1] == symbol && boardArray[row - 2][col - 2] == symbol && boardArray[row - 3][col - 3] == symbol)
             {
+                win = 1;
+            }
+        }
+    }
+
+    if (win == 1)
+    {
+        if (player == 1)
+        {
+            printf("\n\nPlayer 1 Wins!!\n\n");
+            return 1;
+        }
+        else
+        {
+            printf("\n\nPlayer 2 Wins!!\n\n");
+            return 1;
+        }
+    }
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            if (boardArray[i][j] == ' ')
+            {
+                i = height;
+                break;
+            }
+            else if (i == height - 1 && j == width - 1)
+            {
+                printf("\n\nTie!!\n\n");
                 return 1;
             }
         }
@@ -237,30 +282,20 @@ int main(void)
     /* Main game loop */
     while (p1Win == 0 && p2Win == 0)
     {
-        int move1 = GetMove(1);
+        int move1 = GetMove(boardArray, 1);
         MakeMove(boardArray, move1, 1);
+        PrintBoard(boardArray);
         p1Win = CheckWin(boardArray, 1);
 
-        PrintBoard(boardArray);
+        if (p1Win == 1)
+        {
+            break;
+        }
 
-        int move2 = GetMove(2);
+        int move2 = GetMove(boardArray, 2);
         MakeMove(boardArray, move2, 2);
-        p2Win = CheckWin(boardArray, 2);
-
         PrintBoard(boardArray);
-
-        if (p1Win && p2Win)
-        {
-            printf("\n\n Tie!!\n\n");
-        }
-        else if (p1Win == 1)
-        {
-            printf("\n\nPlayer 1 Wins!!\n\n");
-        }
-        else if (p2Win == 1)
-        {
-            printf("\n\nPlayer 2 Wins!!\n\n");
-        }
+        p2Win = CheckWin(boardArray, 2);
     }
 
     return 0;
